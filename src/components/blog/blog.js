@@ -1,35 +1,30 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useState } from "react";
 
 // Importing styles
-import classes from './blog.module.css'
+import classes from "./blog.module.css";
 import Bloglist from "./blogList";
 
 const Blog = () => {
+  const blogs = [];
 
-  let blogs = [];
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
-  const titleInput = useRef();
-  const titleContent = useRef();
   const [blogList, setBlogList] = useState([]);
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
-    const userInsertedTitle = titleInput.current.value;
-    const userInsertedContent = titleContent.current.value;
 
-
-    blogs.push(
+    setBlogList((blogs) => [
+      ...blogs,
       {
         id: Math.random(),
-        title: userInsertedTitle,
-        description: userInsertedContent
-      }
-    );
-
-    setBlogList(blogs);
-    // console.log(blogs)
-  }
-
+        title: title,
+        description: content,
+      },
+    ]);
+    console.log(blogs);
+  };
 
   return (
     <Fragment>
@@ -37,10 +32,24 @@ const Blog = () => {
       <div className={classes.formContainer}>
         <form onSubmit={formSubmitHandler}>
           <label>Title</label>
-          <input type="text" name="title" ref={titleInput} />
+          <input
+            type="text"
+            name="title"
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
+            value={title}
+          />
 
           <label>Content</label>
-          <input type="text" name="content" ref={titleContent} />
+          <input
+            type="text"
+            name="content"
+            onChange={(e) => {
+              setContent(e.target.value);
+            }}
+            value={content}
+          />
 
           <button type="submit">Submit</button>
         </form>
@@ -52,7 +61,6 @@ const Blog = () => {
           description={data.description}
         />
       ))}
-
     </Fragment>
   );
 };
