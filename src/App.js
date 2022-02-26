@@ -7,12 +7,14 @@ import Home from "./components/home/home";
 import About from "./components/about/about";
 import Contact from "./components/contact/contact";
 import Blog from "./components/blog/blog";
+// import GetUsers from "./Apis/Users/GetUsers";
 // Importing Components ends here
 
 function App() {
   return (
     <div className="App">
       <Header />
+      {/* <GetUsers /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />

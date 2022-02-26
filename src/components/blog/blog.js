@@ -1,29 +1,58 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect, useCallback } from "react";
+
+import axios from "axios";
 
 // Importing styles
 import classes from "./blog.module.css";
 import Bloglist from "./blogList";
 
 const Blog = () => {
-  const blogs = [];
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const [blogList, setBlogList] = useState([]);
 
-  const formSubmitHandler = (event) => {
+  const URL =
+    "https://react-router-quotes-2022-default-rtdb.asia-southeast1.firebasedatabase.app/blog.json";
+
+  const getBlogs = useCallback(async () => {
+    try {
+      const response = await axios.get(URL);
+
+      const blogs = [];
+
+      for (const key in response.data) {
+        blogs.push({
+          id: key,
+          title: response.data[key].title,
+          description: response.data[key].description,
+        });
+      }
+      setBlogList(blogs);
+    } catch (error) {
+      throw new Error("Something went wrong");
+    }
+  }, []);
+
+  useEffect(() => {
+    getBlogs();
+  }, [getBlogs]);
+
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
 
-    setBlogList((blogs) => [
-      ...blogs,
-      {
+    await axios
+      .post(URL, {
         id: Math.random(),
         title: title,
         description: content,
-      },
-    ]);
-    console.log(blogs);
+      })
+      .then(function (response) {
+        getBlogs();
+        setTitle("");
+        setContent("");
+      })
+      .catch(function (error) {});
   };
 
   return (
@@ -54,13 +83,14 @@ const Blog = () => {
           <button type="submit">Submit</button>
         </form>
       </div>
-      {blogList.map((data) => (
-        <Bloglist
-          key={data.id}
-          title={data.title}
-          description={data.description}
-        />
-      ))}
+      {blogList &&
+        blogList.map((data) => (
+          <Bloglist
+            key={data.id}
+            title={data.title}
+            description={data.description}
+          />
+        ))}
     </Fragment>
   );
 };
